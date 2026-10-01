@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tophat · Rayyan Khan</title>
+<meta name="description" content="A trading platform that runs a daily NQ futures strategy across a fleet of prop-firm accounts.">
+<meta name="theme-color" content="#F0EEE6">
+<meta property="og:title" content="Tophat">
+<meta property="og:description" content="A trading platform that runs a daily NQ futures strategy across a fleet of prop-firm accounts.">
+<meta property="og:type" content="article">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+<div class="page case">
+
+  <nav class="crumb" aria-label="Breadcrumb">
+    <a href="../">&larr; Rayyan Khan</a>
+  </nav>
+
+  <header class="case-head">
+    <span class="mark" aria-hidden="true">
+      <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round">
+        <ellipse cx="24" cy="33" rx="20" ry="5"/>
+        <path d="M15 33V12h18v21" fill="var(--paper, #F0EEE6)"/>
+        <path d="M15 33a9 3 0 0 0 18 0"/>
+        <path d="M15 27h18"/>
+      </svg>
+    </span>
+    <h1>Tophat</h1>
+    <p class="lede">
+      Automation for a daily NQ futures strategy, run across a fleet of prop&#8209;firm
+      accounts from the first evaluation to the final payout.
+    </p>
+    <p class="tags">Python &middot; FastAPI &middot; ProjectX API &middot; Monte Carlo</p>
+    <nav class="links" aria-label="Project links">
+      <a href="https://github.com/rayyyu12/Tophat">Source on GitHub</a>
+    </nav>
+  </header>
+
+  <main>
+
+    <figure class="demo">
+      <div class="demo-frame">
+        <!--
+          Demo video. Replace the placeholder <div> below with ONE of these.
+
+          A video file saved in this folder, next to this page:
+            <video src="demo.mp4" poster="poster.jpg" controls playsinline preload="metadata"></video>
+
+          A YouTube embed:
+            <iframe src="https://www.youtube-nocookie.com/embed/VIDEO_ID" title="Tophat demo" allow="fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+        -->
+        <div class="demo-placeholder">
+          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="24" cy="24" r="21"/>
+            <path d="M20 16.5v15l12-7.5z"/>
+          </svg>
+          <span>Demo video coming soon</span>
+        </div>
+      </div>
+      <figcaption>
+        A walkthrough of the trading dashboard: the day's plan for every account,
+        firing at the 09:45 drive lock.
+      </figcaption>
+    </figure>
+
+    <div class="prose">
+
+      <h2>What it does</h2>
+      <p>
+        Tophat trades one simple idea many times over. Each morning it watches
+        which way NQ moves between the 09:30 open and 09:45, locks that in as the
+        day's drive, and sends a single bracket order in that direction to every
+        account it manages.
+      </p>
+      <p>
+        The hard part is everything around the trade. Prop-firm accounts move
+        through a lifecycle of evaluation, funding, payout cycles and retirement,
+        each under a trailing drawdown floor and rules that differ from firm to
+        firm. Tophat tracks where every account sits in that lifecycle and decides
+        what each one should trade today, or whether it should sit out.
+      </p>
+
+      <h2>How it works</h2>
+      <ul>
+        <li>
+          <strong>Leaders and mirrors.</strong> Topstep accounts are traded
+          directly through the ProjectX API, and their outcomes are reconciled
+          from balances. Firms with no API are run as mirrors: Tophat models their
+          state by inference, scaling the leader's result and applying each
+          firm's own rules.
+        </li>
+        <li>
+          <strong>Rabbit, the bridge.</strong> A small service on the Windows box
+          that runs the trade copier. Every night it pulls the desired copier
+          layout from Tophat, closes the copier, backs up and rewrites its
+          database in one transaction, relaunches it and checks its own work. If
+          anything looks wrong, it rolls back and reports to Discord.
+        </li>
+        <li>
+          <strong>Simulation on the live code.</strong> Backtests and Monte Carlo
+          runs replay 1&#8209;second NQ bars through the same lifecycle engine that
+          trades live, so the simulator and the real system cannot drift apart.
+          The same seed always gives the same result.
+        </li>
+        <li>
+          <strong>Risk built into the scheduler.</strong> Daily caps on high-risk
+          legs per API key, staggered entry times so the fleet never enters at
+          once, a hedge guard that skips any account that isn't flat, and one
+          attempt per account per day.
+        </li>
+      </ul>
+
+    </div>
+
+  </main>
+
+  <nav class="next" aria-label="Next project">
+    <a href="../throttle-tune/">
+      <span class="next-label">Next project</span>
+      <span class="next-title">Throttle Tune<span class="arrow" aria-hidden="true">&rarr;</span></span>
+    </a>
+  </nav>
+
+</div>
+
+</body>
+</html>

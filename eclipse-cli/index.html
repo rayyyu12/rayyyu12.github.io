@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eclipse CLI · Rayyan Khan</title>
+<meta name="description" content="A terminal trading client for Solana memecoins, with a copy trader that fires before the original trade has confirmed.">
+<meta name="theme-color" content="#F0EEE6">
+<meta property="og:title" content="Eclipse CLI">
+<meta property="og:description" content="A terminal trading client for Solana memecoins, with a copy trader that fires before the original trade has confirmed.">
+<meta property="og:type" content="article">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+<div class="page case">
+
+  <nav class="crumb" aria-label="Breadcrumb">
+    <a href="../">&larr; Rayyan Khan</a>
+  </nav>
+
+  <header class="case-head">
+    <span class="mark" aria-hidden="true">
+      <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5">
+        <circle cx="21" cy="27" r="15"/>
+        <circle cx="27" cy="21" r="15" fill="var(--paper, #F0EEE6)"/>
+      </svg>
+    </span>
+    <h1>Eclipse CLI</h1>
+    <p class="lede">
+      A terminal trading client for Solana memecoins, with a copy trader that
+      spots a watched wallet's buy and fires its own before the original has
+      confirmed.
+    </p>
+    <p class="tags">C++17 &middot; Solana &middot; Jito &middot; Yellowstone gRPC</p>
+    <nav class="links" aria-label="Project links">
+      <a href="https://github.com/rayyyu12/Eclipse-CLI">C++ client on GitHub</a>
+    </nav>
+  </header>
+
+  <main>
+
+    <figure class="demo">
+      <div class="demo-frame">
+        <video src="copy-demo.mp4" poster="copy-demo.jpg" autoplay muted loop playsinline controls></video>
+      </div>
+      <figcaption>
+        The laptop buys a token. The copier on the monitor spots the transaction
+        and sends its own copy before the laptop's buy has confirmed. Its startup
+        credentials are blurred.
+      </figcaption>
+    </figure>
+
+    <div class="prose">
+
+      <h2>What it does</h2>
+      <p>
+        Eclipse is a menu-driven trader that lives in the terminal. Paste a token
+        and an amount, and it builds, signs and sends the swap itself, routing to
+        pump.fun's bonding curve or to the Raydium pool the token graduated to.
+      </p>
+      <p>
+        Its copy trader watches another wallet. The moment that wallet's buy shows
+        up on chain, Eclipse decodes it, builds a matching swap and sends it,
+        before the original transaction has even confirmed. At the time, copiers
+        this fast sold for thousands of dollars and almost nothing public
+        explained how they worked. This one was built from scratch.
+      </p>
+
+      <h2>Against a paid copier</h2>
+      <p>
+        To check the speed, a buy from Eclipse was also copied by a commercial
+        copy trader that sold for thousands of dollars. The numbers below come
+        straight from each tool's own log in these two clips.
+      </p>
+
+      <figure class="demo compare">
+        <div class="compare-grid">
+          <figure>
+            <div class="demo-frame">
+              <video src="copy-demo.mp4" poster="copy-demo.jpg" controls muted playsinline preload="metadata"></video>
+            </div>
+            <figcaption>Eclipse copier</figcaption>
+          </figure>
+          <figure>
+            <div class="demo-frame">
+              <video src="paid-copier.mp4" poster="paid-copier.jpg" controls muted playsinline preload="metadata"></video>
+            </div>
+            <figcaption>Paid copier</figcaption>
+          </figure>
+        </div>
+        <figcaption>
+          In both clips the laptop places the original buy. In the second, the
+          paid tool's dashboard on the monitor picks it up and copies it.
+        </figcaption>
+      </figure>
+
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">From spotting the trade</th>
+            <th scope="col" class="num">Eclipse</th>
+            <th scope="col" class="num">Paid copier</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Copy built and ready to send</th>
+            <td class="num">18 ms</td>
+            <td class="num">40 ms</td>
+          </tr>
+          <tr>
+            <th scope="row">Copy confirmed on chain</th>
+            <td class="num">~1.5 s</td>
+            <td class="num">~1.9 s</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="note">
+        One run each, on different trades, so read it as the same league rather
+        than a lab benchmark.
+      </p>
+
+      <h2>How it works</h2>
+      <ul>
+        <li>
+          <strong>Copying before confirmation.</strong> The copier streams the
+          watched wallet's transactions from a dedicated Solana node over
+          Yellowstone gRPC, decodes each swap as it arrives, and rebuilds it from
+          cached pool data, so its own transaction is signed and on the wire
+          within milliseconds.
+        </li>
+        <li>
+          <strong>Built from the wire format.</strong> The C++ rewrite writes base58,
+          ed25519 signing, program-derived addresses, shortvec prefixes and message
+          compilation by hand in about 600 lines, with no Solana SDK. Nothing can
+          break on a version bump, and nothing sits between the code and the bytes
+          that reach the validator.
+        </li>
+        <li>
+          <strong>Tested where mistakes cost money.</strong> 43 checks pin the
+          risky parts to known values. Address derivation, for one, is checked
+          against Raydium's published AMM authority, which only comes out right
+          if the hashing, bump search and curve check are all correct.
+        </li>
+        <li>
+          <strong>Nothing left stranded.</strong> Buys wrap SOL in a throwaway
+          account that is opened and closed inside the same transaction, so a
+          failed swap can't strand wrapped SOL. Keys are encrypted at rest with
+          AES&#8209;256&#8209;GCM.
+        </li>
+      </ul>
+
+      <h2>About the code</h2>
+      <p>
+        The copy trader in these videos is from Eclipse's original TypeScript
+        build, from January 2025, which is private. The repository on GitHub is
+        the later C++17 rewrite of the trading client, which doesn't include the
+        copy trader.
+      </p>
+
+    </div>
+
+  </main>
+
+  <nav class="next" aria-label="Next project">
+    <a href="../tophat/">
+      <span class="next-label">Next project</span>
+      <span class="next-title">Tophat<span class="arrow" aria-hidden="true">&rarr;</span></span>
+    </a>
+  </nav>
+
+</div>
+
+</body>
+</html>
