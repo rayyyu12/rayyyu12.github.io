@@ -31,9 +31,9 @@
     </span>
     <h1>Throttle Tune</h1>
     <p class="lede">
-      A real-time engine sound simulator for an electric scooter. Press the
-      throttle and it answers like an M4, a Supra, a Hellcat or an SVJ, with the
-      turn-signal buttons as paddle shifters.
+      A real-time engine sound simulator for an electric scooter. Twist the
+      throttle and it behaves like an M4, a Supra, a Hellcat, or a Lamborghini
+      SVJ, with the turn-signal buttons as paddle shifters.
     </p>
     <p class="tags">C++17 &middot; SDL2 &middot; Raspberry Pi &middot; Real-time audio</p>
     <nav class="links" aria-label="Project links">
@@ -48,9 +48,10 @@
         <video src="demo.mp4" poster="poster.jpg" controls playsinline preload="metadata"></video>
       </div>
       <figcaption>
-        Sound on. The box on the stem is open to show the Pi; with the Pi inside
-        and the lid on, it's just part of the scooter. Holding the throttle, then
-        shifting up and back down on the turn-signal buttons.
+        Turn the volume up! The box on the stem is part of the scooter, and it's
+        open for this video to show the Pi inside. Hold the throttle and you can
+        hear it accelerate, then shift up and back down using the turn-signal
+        buttons.
       </figcaption>
     </figure>
 
@@ -58,19 +59,24 @@
 
       <h2>What it does</h2>
       <p>
-        Electric scooters are silent. Throttle Tune reads the throttle through an
-        ADC on a Raspberry Pi mounted on the scooter and plays a convincing engine
-        back in real time, with idle, revs, pulls and decel burble all following
-        your hand. The turn-signal buttons double as paddle shifters, so you can
-        run up through the gears and drop back down yourself.
+        Electric scooters are silent. Throttle Tune reads the throttle signal
+        through an ADC on a Raspberry Pi and plays a convincing engine sound back
+        in real time, with idle, revs, pulls and deceleration burbles, all
+        controlled by your hand. The turn-signal buttons double as paddle
+        shifters, so you can run up through the gears and drop back down
+        yourself.
       </p>
       <p>
         Each car is its own model of an engine, not just a different set of
-        samples. The M4 has launch control and RPM-aware staged revs. The Supra
+        samples. The M4 has launch control and RPM-staged revs. The Supra
         smooths the throttle and picks clips by how hard you're pushing, from a
         light cruise up to a violent pull. The Hellcat runs a virtual engine with
         RPM physics, a five-speed gearbox, rev-matched downshifts and a layered
-        mix of rumble, supercharger whine and exhaust.
+        mix of rumble, supercharger whine and exhaust. The SVJ is a six-speed
+        you shift yourself on the turn-signal buttons, with an ignition cut and
+        an exhaust pop on most upshifts and backfires on downshifts. When it's
+        stopped, the same buttons arm launch control or drop it into neutral to
+        rev in place.
       </p>
 
       <h2>How it works</h2>
@@ -79,25 +85,24 @@
           <strong>One job per thread.</strong> An ADC thread reads the throttle
           and publishes it through a <code>std::atomic</code>, and the buttons are
           interrupt-driven. The audio loop runs under <code>SCHED_FIFO</code>
-          on its own pinned core and never waits on a lock.
+          on its own pinned core and doesn't wait on a lock.
         </li>
         <li>
-          <strong>Look it up, don't compute it.</strong> Gear multipliers, engine
-          braking and downshift thresholds live in <code>constexpr</code> tables,
-          and throttle history sits in a fixed-size ring buffer, so nothing in
-          the hot loop allocates.
+          <strong>Look it up.</strong> Gear multipliers, engine braking and
+          downshift thresholds live in <code>constexpr</code> tables, and
+          throttle history sits in a fixed-size ring buffer.
         </li>
         <li>
-          <strong>Layered, not looped.</strong> Volumes chase their targets with
-          a bit of inertia and crossfade on equal-power curves, so moving between
-          sound layers is heard as the engine changing, not as a clip switching.
+          <strong>Layered, not looped.</strong> Volumes crossfade on equal-power
+          curves, so moving between sound layers is heard as the engine
+          changing, not as a jagged clip switch.
         </li>
         <li>
           <strong>Ported from a prototype.</strong> It started as a 3,000&#8209;line
-          Python script. The C++ rewrite splits it into about twenty files, wraps
-          every SDL resource in RAII, and loads samples in parallel at startup.
-          It builds on Windows with keyboard throttle for development and on the
-          Pi with the real hardware.
+          Python script, jumper wires, a breadboard, and a potentiometer. It now
+          has a single PCB and a Raspberry Pi. The C++ rewrite splits it into
+          about twenty files, wraps every SDL resource in RAII, and loads samples
+          in parallel at startup.
         </li>
       </ul>
 
