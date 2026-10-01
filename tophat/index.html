@@ -31,8 +31,8 @@
     </span>
     <h1>Tophat</h1>
     <p class="lede">
-      Automation for a daily NQ futures strategy, run across a fleet of prop&#8209;firm
-      accounts from the first evaluation to the final payout.
+      Automation for a daily NQ futures strategy, run across several
+      prop&#8209;firm accounts from the first evaluation to the final payout.
     </p>
     <p class="tags">Python &middot; FastAPI &middot; ProjectX API &middot; Monte Carlo</p>
     <nav class="links" aria-label="Project links">
@@ -63,7 +63,7 @@
       </div>
       <figcaption>
         A walkthrough of the trading dashboard: the day's plan for every account,
-        firing at the 09:45 drive lock.
+        firing at the 8:45am CT drive lock.
       </figcaption>
     </figure>
 
@@ -72,9 +72,9 @@
       <h2>What it does</h2>
       <p>
         Tophat trades one simple idea many times over. Each morning it watches
-        which way NQ moves between the 09:30 open and 09:45, locks that in as the
-        day's drive, and sends a single bracket order in that direction to every
-        account it manages.
+        which way NQ moves between the 8:30am CT open and 8:45am, locks that in
+        as the day's drive, and sends a single bracket order in that direction to
+        every account it manages.
       </p>
       <p>
         The hard part is everything around the trade. Prop-firm accounts move
@@ -84,11 +84,52 @@
         what each one should trade today, or whether it should sit out.
       </p>
 
+      <h2>Where the edge comes from</h2>
+      <p>
+        Most automated strategies built by retail traders have no real edge, and
+        on its own, this one doesn't either. NQ's intraday moves are close enough
+        to a random walk that the trade by itself isn't profitable long term. The
+        opening-drive signal helps, but only a little.
+      </p>
+      <p>
+        The edge is in how prop firms work. An evaluation costs around $85, and
+        that fee is the most an account can ever lose. A funded account can pay
+        out up to $2,000 at a time, so a single payout covers more than ten new
+        accounts. Across enough accounts, that lopsided payoff is profitable even
+        if the direction of each trade were a coin flip, and the drive signal is
+        upside on top. Tophat exists to play that game at scale and by the rules.
+      </p>
+
+      <h2>Working with Claude</h2>
+      <p>
+        I built Tophat with Claude as a working partner, and it wouldn't exist
+        without it. Writing the code was the smaller part. The bigger one was the
+        research: Claude ran the backtests, Monte Carlo simulations and
+        statistical analyses that turned a rough idea into a fine-tuned set of
+        parameters, then helped apply them to the live system. Together we
+        worked out:
+      </p>
+      <ul>
+        <li>which prop firms and account types suit the strategy, and whether to
+          take accounts with a daily loss limit</li>
+        <li>which account size returns the most per dollar spent, where a 50K
+          account beat a 150K</li>
+        <li>contract size, and the profit target for each nuke and flip</li>
+        <li>what time to enter, and how to stagger entries so the accounts don't
+          all ride on one trade</li>
+        <li>the expected value of each account, and how often to buy new ones</li>
+      </ul>
+      <p>
+        None of it was guessed. Signals were chosen before testing, checked out
+        of sample and against coin-flip controls, audited before going live, and
+        then compared against real results.
+      </p>
+
       <h2>How it works</h2>
       <ul>
         <li>
           <strong>Leaders and mirrors.</strong> Topstep accounts are traded
-          directly through the ProjectX API, and their outcomes are reconciled
+          directly through the ProjectX API, and their outcomes are determined
           from balances. Firms with no API are run as mirrors: Tophat models their
           state by inference, scaling the leader's result and applying each
           firm's own rules.
@@ -97,13 +138,14 @@
           <strong>Rabbit, the bridge.</strong> A small service on the Windows box
           that runs the trade copier. Every night it pulls the desired copier
           layout from Tophat, closes the copier, backs up and rewrites its
-          database in one transaction, relaunches it and checks its own work. If
-          anything looks wrong, it rolls back and reports to Discord.
+          database, relaunches it and checks its own work. If anything looks
+          wrong, it rolls back and reports to Discord.
         </li>
         <li>
           <strong>Simulation on the live code.</strong> Backtests and Monte Carlo
-          runs replay 1&#8209;second NQ bars through the same lifecycle engine that
-          trades live, so the simulator and the real system cannot drift apart.
+          runs replay NQ tick data, rolled up into 1&#8209;second bars, through the
+          same lifecycle engine that trades live, so the simulator and the real
+          system cannot drift apart.
           The same seed always gives the same result.
         </li>
         <li>
