@@ -30,8 +30,8 @@
     <h1>Eclipse CLI</h1>
     <p class="lede">
       A terminal trading client for Solana memecoins, with a copy trader that
-      spots a trade from any wallet it's watching and fires its own before the
-      original has confirmed.
+      monitors trades from any wallet and fires its own before the original
+      has confirmed.
     </p>
     <p class="tags">C++17 &middot; Solana &middot; Jito &middot; Yellowstone gRPC</p>
     <nav class="links" aria-label="Project links">
@@ -46,9 +46,9 @@
         <video src="copy-demo.mp4" poster="copy-demo.jpg" autoplay muted loop playsinline controls></video>
       </div>
       <figcaption>
-        The laptop buys a token. The copier on the monitor spots the transaction
-        and sends its own copy before the laptop's buy has confirmed. Its startup
-        credentials are blurred.
+        The laptop buys a token using Eclipse. The Eclipse copier on the monitor
+        picks up the transaction and sends its own copy before the laptop's buy
+        has confirmed. Wallet credentials are blurred out.
       </figcaption>
     </figure>
 
@@ -56,27 +56,27 @@
 
       <h2>What it does</h2>
       <p>
-        Eclipse is a menu-driven Solana trading client that lives in the
-        terminal. It shows your holdings with size, average entry and live profit
-        and loss, and it places buys and sells itself, building, signing and
-        sending each swap and routing it to pump.fun's bonding curve or to the
-        Raydium pool the token graduated to.
+        Eclipse is a terminal-based Solana trading client. It shows your
+        holdings with size, average entry and current PnL, and it places buys
+        and sells itself by building, signing, and sending each swap, routing
+        it to pump.fun's bonding curve or to the Raydium pool the token
+        graduated to.
       </p>
       <p>
         Its copy trader watches a list of wallets. The moment one of them buys or
         sells, Eclipse decodes the trade, builds a matching swap and sends it,
-        before the original transaction has even confirmed. Its own settings
-        decide how much to spend (a fixed amount, or the same size as the wallet
-        it's copying, within limits), the slippage, and which venues to follow.
-        At the time, copiers this fast sold for thousands of dollars and almost
-        nothing public explained how they worked. This one was built from scratch.
+        before the original transaction has even confirmed. Settings can be
+        customized to decide how much to spend, the slippage, and which token
+        types to copy. At the time, copiers this fast sold for thousands of
+        dollars and almost nothing public explained how they worked, so I had to
+        build my own from scratch.
       </p>
 
       <h2>Against a paid copier</h2>
       <p>
-        To check the speed, a buy from Eclipse was also copied by a commercial
+        To check the speed, a buy from Eclipse was also copied by a private
         copy trader that sold for thousands of dollars. The numbers below come
-        straight from each tool's own log in these two clips.
+        from each tool's own logs in these two clips.
       </p>
 
       <figure class="demo compare">
@@ -103,7 +103,7 @@
       <table>
         <thead>
           <tr>
-            <th scope="col">From spotting the trade</th>
+            <th scope="col">Trade</th>
             <th scope="col" class="num">Eclipse</th>
             <th scope="col" class="num">Paid copier</th>
           </tr>
@@ -128,33 +128,33 @@
 
       <h2>How it works</h2>
       <p>
-        Speed was the whole point, so every step between seeing a trade and
-        sending the copy is built to avoid waiting on the network.
+        Speed was the whole point and every millisecond counted, so every step
+        between seeing a trade and sending the copy was built to avoid waiting
+        on the network.
       </p>
       <ul>
         <li>
           <strong>Seeing trades before they confirm.</strong> Instead of polling
           an RPC node, the copier holds a Yellowstone gRPC stream open to a
-          dedicated node: a validator plugin that pushes transactions out as
-          they're processed. It subscribes at processed commitment, filtered on
-          the node to the watched wallets and the pump.fun and Raydium programs,
-          so a trade arrives as soon as a validator executes it, before the
-          network has confirmed it.
+          dedicated node. This is a validator plugin that pushes transactions
+          out as they're processed. It subscribes at processed commitment and is
+          filtered on the node to the watched wallets only, so a trade arrives
+          as soon as a validator executes it, before the network has even
+          confirmed it.
         </li>
         <li>
-          <strong>Decoding straight from the stream.</strong> Everything needed to
-          copy a trade is already in the streamed transaction. Direction and size
-          come from its token balance changes and logs, and for Raydium the pool
-          and market accounts are lifted straight out of the original
-          instruction, so there's no pool lookup, even the first time a token is
-          seen.
+          <strong>Decoding from the monitored transaction.</strong> Everything
+          needed to copy a trade is already in the monitored transaction.
+          Direction and size come from its token balance changes and logs, and as
+          for Raydium, the pool and market accounts are extracted from the
+          original instruction, so no time is spent on a pool lookup.
         </li>
         <li>
-          <strong>Nothing fetched on the hot path.</strong> A background task keeps
-          a fresh blockhash on hand, token accounts are derived locally, and the
-          priority fee and compute budget are set up front rather than
-          estimated, so preparing and signing the copy took 18&nbsp;ms in the
-          clip above.
+          <strong>Nothing fetched on the hot path.</strong> A background task
+          always keeps a fresh blockhash on hand, token accounts are derived
+          locally, and the priority fee and compute budget are configured
+          beforehand, so preparing and signing the copy only took 18&nbsp;ms in
+          the clip above.
         </li>
         <li>
           <strong>Straight to the block engine.</strong> Copies skip preflight
@@ -166,8 +166,8 @@
           <strong>Built from the wire format.</strong> Base58, ed25519 signing,
           program-derived addresses, shortvec prefixes and message compilation
           are all written by hand in about 600 lines of C++, with no Solana SDK.
-          Nothing can break on a version bump, and nothing sits between the code
-          and the bytes that reach the validator.
+          As a result, nothing can break on a version change, and nothing sits
+          between the code and the bytes that reach the validator.
         </li>
       </ul>
 
