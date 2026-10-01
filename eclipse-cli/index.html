@@ -127,42 +127,49 @@
       </p>
 
       <h2>How it works</h2>
+      <p>
+        Speed was the whole point, so every step between seeing a trade and
+        sending the copy is built to avoid waiting on the network.
+      </p>
       <ul>
         <li>
-          <strong>Copying before confirmation.</strong> The copier streams the
-          watched wallet's transactions from a dedicated Solana node over
-          Yellowstone gRPC, decodes each swap as it arrives, and rebuilds it from
-          cached pool data, so its own transaction is signed and on the wire
-          within milliseconds.
+          <strong>Seeing trades before they confirm.</strong> Instead of polling
+          an RPC node, the copier holds a Yellowstone gRPC stream open to a
+          dedicated node: a validator plugin that pushes transactions out as
+          they're processed. It subscribes at processed commitment, filtered on
+          the node to the watched wallets and the pump.fun and Raydium programs,
+          so a trade arrives as soon as a validator executes it, before the
+          network has confirmed it.
         </li>
         <li>
-          <strong>Built from the wire format.</strong> The C++ rewrite writes base58,
-          ed25519 signing, program-derived addresses, shortvec prefixes and message
-          compilation by hand in about 600 lines, with no Solana SDK. Nothing can
-          break on a version bump, and nothing sits between the code and the bytes
-          that reach the validator.
+          <strong>Decoding straight from the stream.</strong> Everything needed to
+          copy a trade is already in the streamed transaction. Direction and size
+          come from its token balance changes and logs, and for Raydium the pool
+          and market accounts are lifted straight out of the original
+          instruction, so there's no pool lookup, even the first time a token is
+          seen.
         </li>
         <li>
-          <strong>Tested where mistakes cost money.</strong> 43 checks pin the
-          risky parts to known values. Address derivation, for one, is checked
-          against Raydium's published AMM authority, which only comes out right
-          if the hashing, bump search and curve check are all correct.
+          <strong>Nothing fetched on the hot path.</strong> A background task keeps
+          a fresh blockhash on hand, token accounts are derived locally, and the
+          priority fee and compute budget are set up front rather than
+          estimated, so preparing and signing the copy took 18&nbsp;ms in the
+          clip above.
         </li>
         <li>
-          <strong>Nothing left stranded.</strong> Buys wrap SOL in a throwaway
-          account that is opened and closed inside the same transaction, so a
-          failed swap can't strand wrapped SOL. Keys are encrypted at rest with
-          AES&#8209;256&#8209;GCM.
+          <strong>Straight to the block engine.</strong> Copies skip preflight
+          simulation and go to Jito's block engine as a bundle with a tip. The
+          tip bids for priority placement in the current leader's block, and is
+          either fixed or sized from Jito's live landed-tip percentiles.
+        </li>
+        <li>
+          <strong>Built from the wire format.</strong> Base58, ed25519 signing,
+          program-derived addresses, shortvec prefixes and message compilation
+          are all written by hand in about 600 lines of C++, with no Solana SDK.
+          Nothing can break on a version bump, and nothing sits between the code
+          and the bytes that reach the validator.
         </li>
       </ul>
-
-      <h2>About the code</h2>
-      <p>
-        The copy trader in these videos is from Eclipse's original TypeScript
-        build, from January 2025, which is private. The repository on GitHub is
-        the later C++17 rewrite of the trading client, which doesn't include the
-        copy trader.
-      </p>
 
     </div>
 
