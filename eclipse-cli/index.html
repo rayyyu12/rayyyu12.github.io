@@ -30,8 +30,8 @@
     <h1>Eclipse CLI</h1>
     <p class="lede">
       A terminal trading client for Solana memecoins, with a copy trader that
-      spots a watched wallet's buy and fires its own before the original has
-      confirmed.
+      spots a trade from any wallet it's watching and fires its own before the
+      original has confirmed.
     </p>
     <p class="tags">C++17 &middot; Solana &middot; Jito &middot; Yellowstone gRPC</p>
     <nav class="links" aria-label="Project links">
@@ -56,16 +56,20 @@
 
       <h2>What it does</h2>
       <p>
-        Eclipse is a menu-driven trader that lives in the terminal. Paste a token
-        and an amount, and it builds, signs and sends the swap itself, routing to
-        pump.fun's bonding curve or to the Raydium pool the token graduated to.
+        Eclipse is a menu-driven Solana trading client that lives in the
+        terminal. It shows your holdings with size, average entry and live profit
+        and loss, and it places buys and sells itself, building, signing and
+        sending each swap and routing it to pump.fun's bonding curve or to the
+        Raydium pool the token graduated to.
       </p>
       <p>
-        Its copy trader watches another wallet. The moment that wallet's buy shows
-        up on chain, Eclipse decodes it, builds a matching swap and sends it,
-        before the original transaction has even confirmed. At the time, copiers
-        this fast sold for thousands of dollars and almost nothing public
-        explained how they worked. This one was built from scratch.
+        Its copy trader watches a list of wallets. The moment one of them buys or
+        sells, Eclipse decodes the trade, builds a matching swap and sends it,
+        before the original transaction has even confirmed. Its own settings
+        decide how much to spend (a fixed amount, or the same size as the wallet
+        it's copying, within limits), the slippage, and which venues to follow.
+        At the time, copiers this fast sold for thousands of dollars and almost
+        nothing public explained how they worked. This one was built from scratch.
       </p>
 
       <h2>Against a paid copier</h2>
