@@ -1,7 +1,8 @@
 # Portfolio
 
 A small portfolio: a home page plus one page per project. Plain HTML and CSS,
-with no build step, no dependencies, no JavaScript, and no network requests.
+with no build step and no dependencies. The only JavaScript is a small,
+cookieless analytics script (see Analytics below).
 
 ```
 index.html                 home page, links to each project
@@ -9,6 +10,7 @@ tophat/index.html          project page
 throttle-tune/index.html   project page
 eclipse-cli/index.html     project page
 style.css                  palette, type, layout (shared by every page)
+analytics.js               Umami analytics: page views, clicks, time on page
 favicon.svg                eclipse crescent
 ```
 
@@ -38,7 +40,7 @@ an HTML comment right above it. Either:
   `<video src="demo.mp4" poster="poster.jpg" controls playsinline preload="metadata"></video>`.
   The poster is an optional still frame shown before playback.
 - **Or embed it from YouTube** with the `<iframe>` snippet in the same comment.
-  This is the only thing on the site that makes a network request.
+  That page then also loads YouTube's player and its tracking.
 
 Keep self-hosted videos short and compressed. GitHub warns on files over 50 MB
 and rejects anything over 100 MB. Something like this gets a 1080p recording
@@ -65,6 +67,31 @@ The frame is 16:9. For a vertical phone video, add `portrait` to the figure
 (`<figure class="demo portrait">`) to get a narrow 9:16 frame that never
 outgrows the screen. Eclipse's page also shows the two-clip comparison layout
 (`demo compare`).
+
+## Analytics
+
+The site uses [Umami Cloud](https://cloud.umami.is) (free up to 100K events a
+month). It sets no cookies and stores no personal data, so it needs no consent
+banner. Everything lives in `analytics.js`, and the website ID at the top of
+that file switches it on; leave it empty to turn analytics off. It only counts
+visits to rayyyu12.github.io, so local previews don't show up.
+
+What the dashboard shows:
+
+- **Page views, visitors, referrers, countries, devices**: Umami tracks these
+  on its own.
+- **Link clicks**: each link carries a `data-umami-event` attribute, e.g.
+  `Open project`, `View source`, `Next project`, `Back to home`,
+  `GitHub profile`, `Email`. Project links also carry a `project` property.
+  A new link only needs the attribute to be tracked.
+- **Time on page**: a `Time on page` event with `seconds` and a `range`
+  (under 10s, 10-30s, 30-60s, 1-3 min, 3+ min), sent once when the visitor
+  leaves or switches tabs. It counts only time the tab was visible. It also
+  makes Umami's built-in visit duration accurate for one-page visits.
+- **Video plays**: a `Play video` event the first time someone starts a
+  video. The autoplaying Eclipse loop is skipped.
+
+Events and their properties show under Events in the Umami dashboard.
 
 ## Preview
 
