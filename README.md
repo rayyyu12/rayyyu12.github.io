@@ -2,7 +2,8 @@
 
 A small portfolio: a home page plus one page per project. Plain HTML and CSS,
 with no build step and no dependencies. The only JavaScript is a small,
-cookieless analytics script (see Analytics below).
+cookieless analytics script (see Analytics below) and the home page's
+rotating fun fact.
 
 ```
 index.html                 home page, links to each project
@@ -11,6 +12,9 @@ throttle-tune/index.html   project page
 eclipse-cli/index.html     project page
 style.css                  palette, type, layout (shared by every page)
 analytics.js               Umami analytics: page views, clicks, time on page
+facts.js                   rotating fun fact on the home page
+img/                       polaroid photos on the home page
+fonts/                     Caveat, the handwritten polaroid captions (SIL OFL)
 favicon.svg                eclipse crescent
 ```
 
@@ -24,11 +28,40 @@ Everything you'd normally want to change is in one of three places:
 - **Project write-ups** live in each project's folder. A project page has a
   header (mark, name, one-line summary, tags, GitHub link), a demo video, a
   "What it does" / "How it works" write-up, and a link to the next project.
+- **Fun facts and polaroids** live in `index.html`; see below.
 - **Colors and type** live in the `:root` block at the top of `style.css`.
 
 To add a project, copy one of the project folders, rename it, edit the copy,
 add an `<li class="project">` to `index.html` that links to it, and update the
 "Next project" links so the chain still loops through every project.
+
+A project that can't be shown (Tophat is under NDA) swaps its source link for
+a `<p class="status">` line and its demo for an `<aside class="notice">`.
+
+### Fun facts
+
+The fun facts are a plain list in `index.html`, under the comment that
+mentions `facts.js`. Add, reword or remove `<li>`s freely. The home page shows
+a random one per visit and moves on every 6 seconds (`ROTATE_MS` in
+`facts.js`). It pauses while hovered and stays put for visitors who prefer
+reduced motion.
+
+### Polaroids
+
+Each photo on the home page is a `<figure class="snap">` placed next to what
+it relates to: `on-left` or `on-right`, a `--tilt`, and a `--top` offset for
+the wide-screen layout, where they sit in the margins. Below 1200px they flow
+inline instead. After moving or adding one, check that none overlap at a wide
+window.
+
+Put originals in `photos/` (git-ignored, like `videos/`), then crop, shrink and
+strip the metadata (phone photos carry GPS) into `img/`:
+
+```bash
+ffmpeg -i photos/new.jpg -vf "crop=in_w:in_w:0:(in_h-in_w)/2,scale=440:440" -map_metadata -1 -c:v libwebp -quality 80 img/new.webp
+```
+
+Only use photos you took or have permission to use.
 
 ## Adding a demo video
 
