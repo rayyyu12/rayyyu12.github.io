@@ -285,6 +285,18 @@ h1 {
   text-align: center;
 }
 
+/* Attribution for photos that aren't mine, as their licence requires. */
+.snap .credit {
+  display: block;
+  margin-top: 0.2rem;
+  font-family: var(--sans);
+  font-size: 0.625rem;
+  line-height: 1.35;
+  color: var(--ink-mute);
+}
+
+.snap .credit a { color: inherit; }
+
 .snap:hover {
   transform: rotate(0deg) scale(1.04);
   box-shadow:
