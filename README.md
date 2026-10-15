@@ -61,7 +61,18 @@ strip the metadata (phone photos carry GPS) into `img/`:
 ffmpeg -i photos/new.jpg -vf "crop=in_w:in_w:0:(in_h-in_w)/2,scale=440:440" -map_metadata -1 -c:v libwebp -quality 80 img/new.webp
 ```
 
-Only use photos you took or have permission to use.
+Only use photos you took, or openly licensed ones credited as their licence
+asks: add a `<small class="credit">` inside the `figcaption`, as the Emira
+polaroid does.
+
+### Credits
+
+- `img/emira.webp`: [Lotus Emira Turbo SE in Zinc Grey](https://commons.wikimedia.org/wiki/File:Lotus_Emira_Turbo_SE_Zinc_Grey_01.jpg)
+  by Ethan Llamas, [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/),
+  cropped. The cropped image is shared under the same licence.
+- `fonts/caveat-500-latin.woff2`: Caveat by the Caveat Project Authors,
+  SIL Open Font License 1.1 (`fonts/Caveat-OFL.txt`).
+- Every other photo is mine.
 
 ## Adding a demo video
 
