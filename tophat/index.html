@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tophat · Rayyan Khan</title>
-<meta name="description" content="A trading platform that runs a daily NQ futures strategy across a fleet of prop-firm accounts.">
+<meta name="description" content="A platform that automates a futures trading strategy across a fleet of prop-firm accounts.">
 <meta name="theme-color" content="#F0EEE6">
 <meta property="og:title" content="Tophat">
-<meta property="og:description" content="A trading platform that runs a daily NQ futures strategy across a fleet of prop-firm accounts.">
+<meta property="og:description" content="A platform that automates a futures trading strategy across a fleet of prop-firm accounts.">
 <meta property="og:type" content="article">
 <link rel="icon" href="../favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../style.css">
@@ -32,50 +32,35 @@
     </span>
     <h1>Tophat</h1>
     <p class="lede">
-      Automation for a daily NQ futures strategy, run across several
+      Automation for a futures trading strategy, run across a fleet of
       prop&#8209;firm accounts from the first evaluation to the final payout.
     </p>
-    <p class="tags">Python &middot; FastAPI &middot; ProjectX API &middot; Monte Carlo</p>
-    <nav class="links" aria-label="Project links">
-      <a href="https://github.com/rayyyu12/Tophat" data-umami-event="View source" data-umami-event-project="Tophat">Source on GitHub</a>
-    </nav>
+    <p class="tags">Python &middot; FastAPI &middot; Monte Carlo</p>
+    <p class="status">Sold &middot; Under NDA</p>
   </header>
 
   <main>
 
-    <figure class="demo">
-      <div class="demo-frame">
-        <!--
-          Demo video. Replace the placeholder <div> below with ONE of these.
-
-          A video file saved in this folder, next to this page:
-            <video src="demo.mp4" poster="poster.jpg" controls playsinline preload="metadata"></video>
-
-          A YouTube embed:
-            <iframe src="https://www.youtube-nocookie.com/embed/VIDEO_ID" title="Tophat demo" allow="fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe>
-        -->
-        <div class="demo-placeholder">
-          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true">
-            <circle cx="24" cy="24" r="21"/>
-            <path d="M20 16.5v15l12-7.5z"/>
-          </svg>
-          <span>Demo video coming soon</span>
-        </div>
-      </div>
-      <figcaption>
-        A walkthrough of the trading dashboard: the day's plan for every account,
-        firing at the 8:45am CT drive lock.
-      </figcaption>
-    </figure>
+    <aside class="notice" aria-label="Confidentiality">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="5" y="11" width="14" height="10" rx="2"/>
+        <path d="M8 11V8a4 4 0 0 1 8 0v3"/>
+      </svg>
+      <p>
+        <strong>Sold, and under NDA.</strong> Tophat was bought in 2026 for
+        $50,000 up front, and I stay on as its paid developer and maintainer. Its
+        code, dashboard and strategy details are confidential, so there's no demo
+        or source to show, but this page covers what it does at a high level.
+      </p>
+    </aside>
 
     <div class="prose">
 
       <h2>What it does</h2>
       <p>
-        Tophat trades one simple idea many times over. Each morning it watches
-        which way NQ moves between the 8:30am CT open and 8:45am, locks that in
-        as the day's drive, and sends a single bracket order in that direction to
-        every account it manages.
+        Tophat runs one futures strategy many times over, across a fleet of
+        prop&#8209;firm accounts. Each morning it decides what every account
+        should trade, places the orders, and reconciles the results.
       </p>
       <p>
         The hard part is everything around the trade. Prop-firm accounts move
@@ -88,17 +73,11 @@
       <h2>Where the edge comes from</h2>
       <p>
         Most automated strategies built by retail traders have no real edge, and
-        on its own, this one doesn't either. NQ's intraday moves are close enough
-        to a random walk that the trade by itself isn't profitable long term. The
-        opening-drive signal helps, but only a little.
-      </p>
-      <p>
-        The edge is in how prop firms work. An evaluation costs around $85, and
-        that fee is the most an account can ever lose. A funded account can pay
-        out up to $2,000 at a time, so a single payout covers more than ten new
-        accounts. Across enough accounts, that lopsided payoff is profitable even
-        if the direction of each trade were a coin flip, and the drive signal is
-        upside on top. Tophat exists to play that game at scale and by the rules.
+        on its own, this one doesn't either. The edge is in how prop firms work:
+        an account can never lose more than it cost to get, while a funded account
+        can pay out many times that. Across enough accounts, that lopsided payoff
+        is what makes it profitable. Tophat exists to play that game at scale and
+        by the rules.
       </p>
 
       <h2>Working with Claude</h2>
@@ -111,44 +90,37 @@
         worked out:
       </p>
       <ul>
-        <li>which prop firms and account types suit the strategy, and whether to
-          take accounts with a daily loss limit</li>
-        <li>which account size returns the most per dollar spent, where a 50K
-          account beat a 150K</li>
-        <li>contract size, and the profit target for each nuke and flip</li>
-        <li>what time to enter, and how to stagger entries so the accounts don't
-          all ride on one trade</li>
-        <li>the expected value of each account, and how often to buy new ones</li>
+        <li>which firms and account types suit the strategy</li>
+        <li>account size, position sizing and profit targets</li>
+        <li>when to trade, and how to spread risk so the accounts don't all ride
+          on one trade</li>
+        <li>the expected value of each account, and how often to add new ones</li>
       </ul>
 
       <h2>How it works</h2>
       <ul>
         <li>
-          <strong>Leaders and mirrors.</strong> Topstep accounts are traded
-          directly through the ProjectX API, and their outcomes are determined
-          from balances. Firms with no API are run as mirrors: Tophat models their
-          state by inference, scaling the leader's result and applying each
-          firm's own rules.
+          <strong>One engine, many firms.</strong> Accounts at firms with an API
+          are traded directly. Firms without one are handled too: Tophat models
+          those accounts from the ones it trades, applying each firm's own rules.
         </li>
         <li>
-          <strong>Rabbit, the bridge.</strong> A small service on the Windows box
-          that runs the trade copier. Every night it pulls the desired copier
-          layout from Tophat, closes the copier, backs up and rewrites its
-          database, relaunches it and checks its own work. If anything looks
-          wrong, it rolls back and reports to Discord.
+          <strong>A bridge that checks its own work.</strong> A companion service
+          keeps the outside tools Tophat relies on in sync every night. It backs
+          up before each change, verifies the result, and rolls back and reports
+          if anything looks wrong.
         </li>
         <li>
           <strong>Simulation on the live code.</strong> Backtests and Monte Carlo
-          runs replay NQ tick data, rolled up into 1&#8209;second bars, through the
-          same lifecycle engine that trades live, so the simulator and the real
-          system cannot drift apart.
-          The same seed always gives the same result.
+          runs replay historical tick data through the same engine that trades
+          live, so the simulator and the real system can't drift apart. The same
+          seed always gives the same result.
         </li>
         <li>
-          <strong>Risk built into the scheduler.</strong> Daily caps on high-risk
-          legs per API key, staggered entry times so the fleet never enters at
-          once, a hedge guard that skips any account that isn't flat, and one
-          attempt per account per day.
+          <strong>Risk built into the scheduler.</strong> Daily caps on the
+          riskiest trades, staggered entries so the fleet never moves at once, a
+          guard that skips any account with an open position, and one attempt per
+          account per day.
         </li>
       </ul>
 
