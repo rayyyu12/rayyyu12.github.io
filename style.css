@@ -16,6 +16,16 @@
   --serif: ui-serif, "New York", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
   --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
   --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  --hand: "Caveat", "Segoe Print", "Bradley Hand", cursive;  /* polaroid captions */
+}
+
+/* Self-hosted so visitors' browsers never contact Google. SIL OFL, see
+   fonts/Caveat-OFL.txt. */
+@font-face {
+  font-family: "Caveat";
+  src: url("fonts/caveat-500-latin.woff2") format("woff2");
+  font-weight: 500;
+  font-display: swap;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -234,6 +244,74 @@ h1 {
 }
 
 .project-link:focus-visible { outline-offset: 2px; }
+
+/* ---------------------------------------------------------------
+   Snapshots: polaroids on the home page. Inline between sections on
+   narrow screens; out in the margins, beside what they relate to, on
+   wide ones. Each sets its own --tilt, and --top for the margin layout.
+   --------------------------------------------------------------- */
+
+.snap {
+  width: min(12rem, 58%);
+  margin: 1.75rem 0 2rem 0.75rem;
+  padding: 0.55rem 0.55rem 0;
+  background: #FBFAF7;
+  box-shadow:
+    0 1px 2px rgba(31, 30, 29, 0.10),
+    0 12px 24px -10px rgba(31, 30, 29, 0.28);
+  transform: rotate(var(--tilt, 0deg));
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.snap.on-right {
+  margin-left: auto;
+  margin-right: 0.75rem;
+}
+
+.snap img {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: var(--well);
+}
+
+.snap figcaption {
+  padding: 0.4rem 0.2rem 0.55rem;
+  font-family: var(--hand);
+  font-size: 1.2rem;
+  font-weight: 500;
+  line-height: 1.15;
+  color: var(--ink);
+  text-align: center;
+}
+
+.snap:hover {
+  transform: rotate(0deg) scale(1.04);
+  box-shadow:
+    0 1px 2px rgba(31, 30, 29, 0.10),
+    0 18px 32px -12px rgba(31, 30, 29, 0.34);
+}
+
+.project .snap { margin-top: 0; }
+
+@media (min-width: 75rem) {
+  .intro,
+  .fact-row,
+  .project { position: relative; }
+
+  .snap,
+  .project .snap {
+    position: absolute;
+    top: var(--top, 0);
+    width: 10.5rem;
+    margin: 0;
+    z-index: 1;
+  }
+
+  .snap.on-left { right: calc(100% + 3.5rem); }
+  .snap.on-right { left: calc(100% + 3.5rem); margin: 0; }
+  .snap:hover { z-index: 2; }
+}
 
 /* ---------------------------------------------------------------
    Project pages

@@ -1,4 +1,5 @@
-# Raw phone recordings. They carry GPS metadata, and one shows unredacted
-# wallet credentials, so only the processed copies in each project folder
-# are published.
+# Raw phone recordings and photos. They carry GPS metadata (and one clip
+# shows unredacted wallet credentials), so only the processed copies are
+# published.
 videos/
+photos/
