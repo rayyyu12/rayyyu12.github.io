@@ -16,6 +16,7 @@ facts.js                   rotating fun fact on the home page
 img/                       polaroid photos on the home page
 fonts/                     Caveat, the handwritten polaroid captions (SIL OFL)
 favicon.svg                eclipse crescent
+Rayyan_Khan_Resume.pdf     résumé, linked from the home page
 ```
 
 ## Editing
@@ -125,8 +126,9 @@ What the dashboard shows:
 - **Page views, visitors, referrers, countries, devices**: Umami tracks these
   on its own.
 - **Link clicks**: each link carries a `data-umami-event` attribute, e.g.
-  `Open project`, `View source`, `Next project`, `Back to home`,
-  `GitHub profile`, `Email`. Project links also carry a `project` property.
+  `Open project`, `View source`, `Next project`, `Back to home`, `Resume`,
+  `LinkedIn profile`, `GitHub profile`, `Email`, `Another fun fact`. Project
+  links also carry a `project` property.
   A new link only needs the attribute to be tracked.
 - **Time on page**: a `Time on page` event with `seconds` and a `range`
   (under 10s, 10-30s, 30-60s, 1-3 min, 3+ min), sent once when the visitor
